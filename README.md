@@ -40,7 +40,7 @@ Development
 ===========
 
 GIT
-===
+~~~
 
 You can check the latest sources with the command::
 
