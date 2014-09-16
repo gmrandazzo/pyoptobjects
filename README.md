@@ -44,8 +44,9 @@ GIT
 
 You can check the latest sources with the command::
 
-    git clone https://github.com/zeld/scikit-optobj.git
-
+  git clone https://github.com/zeld/scikit-optobj.git
+  
+~~~
 
 Contributing
 ~~~~~~~~~~~~~
