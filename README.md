@@ -21,7 +21,7 @@ Important links
 Dependencies
 ============
 
-The required dependencies to use scikit-optobj is scikit-learn.
+The required dependencies to use scikit-optobj is scikit-learn and numpy.
 
 
 Install
