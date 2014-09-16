@@ -48,7 +48,7 @@ You can check the latest sources with the command::
 
 
 Contributing
-============
+~~~~~~~~~~~~~
 
 To contribute you can fork the project, or if you have already forked the project
 update to the latest version of scikit-optobj, make the changes and open a Pull Request.
