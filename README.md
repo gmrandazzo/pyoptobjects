@@ -56,7 +56,8 @@ update to the latest version of scikit-optobj, make the changes and open a Pull 
 
 However some recomendation before open a Pull Request:
   * Be sure that your code it's working.
-  * Use pylint to check your code.
+  * Use pylint to check your code. The Global Evaluation rate must be >= 9.0
+  * Comment your code with Parameters, Attribute, Return, Notes and References.
   * A test is necessary.
   
 Probabily your code will be integrated but some quality and goals have to keep in mind.
