@@ -3,34 +3,26 @@ Most Descriptor Compounds: Compound Selection algorithm
 for databases.
 """
 # Author: Giuseppe Marco Randazzo gmrandazzo@gmail.com
-
 # License: BSD 3 clause
 
-from scipy.spatial.distance import pdist, squareform
-from numpy import zeros, delete
+from numpy import zeros, array
 
-from time import sleep
-
-class MDC:
+class MDC(object):
     """Perform Most Descriptor Compound Selection of data
 
     Parameters
     ----------
+    dmx : array, shape(row,row)
+        A square distance matrix.
+        To build a distance matrix see scipy at:
+        http://docs.scipy.org/doc/scipy/reference/spatial.distance.html
+
     nobjects : int, optional, default: 0
         Number of object to select. 0 means an autostop
         criterion.
 
-    metrics : string, optional, default: euclidean
-        Set the metrics function to use in order to calculate the
-        distance matrix. See scipy to view how many distace function
-        are aivalable at
-        http://docs.scipy.org/doc/scipy/reference/spatial.distance.html
-
     Attributes
     ----------
-    dmx_ : array, shape (row_, row_)
-        Distance Matrix of all x objects
-
     info_ : array, shape (row_,)
         Information Vector to select the mdc
 
@@ -53,69 +45,64 @@ class MDC:
 
     """
 
-    def __init__(self, nobjects=0, metric='euclidean'):
+    def __init__(self, dmx, nobjects=0):
+        self.dmx_ = dmx
         self.nobjects = nobjects
-        self.metric = metric
-        self.dmx_ = None
         self.info_ = None
-        self.mdcids = []
-
-    def select(self, x):
-        """ Run the Most Descriptive Compound Selection"""
-        self.mdcids = []
-        self.dmx_ = squareform(pdist(x, self.metric))
-        row = len(x)
-        self.info_ = zeros(row)
-
         self._build_infovector()
-        # Start MDC Selection from the info vector
-        nmdc = 0
+        self.mdcids = []
+
+
+    def mdclist(self):
+        """ Return the list of most descriptor compounds """
+        return self.mdcids
+
+
+    def getnext(self):
+        """ Get the next most descriptor compound """
+        self._appendnext()
+        return self.mdcids[-1]
+
+
+    def select(self):
+        """ Run the Most Descriptive Compound Selection"""
         stopcondition = True
         while stopcondition:
-            dist = self.info_[0]
-            mdc = 0
-
-            # Select the MDC with the major information
-            for i in range(len(self.info_)):
-                if self.info_[i] > dist:
-                    dist = self.info_[i]
-                    mdc = i
-                else:
-                    continue
-
-            nmdc += 1
-            self.mdcids.append(mdc)
+            self._appendnext()
             self._rm_mdc_contrib()
-
             # Check Stop Condition
             if self.nobjects > 0:
-                if nmdc < self.nobjects:
-                    stopcondition = True
-                else:
+                if len(self.mdcids) == len(self.dmx_):
                     stopcondition = False
+                else:
+                    if len(self.mdcids) < self.nobjects:
+                        continue
+                    else:
+                        stopcondition = False
             else:
-                cc = 0
+                ncheck = 0
                 for item in self.info_:
                     if item < 1:
-                        cc += 1
+                        ncheck += 1
                     else:
                         continue
 
-                if cc > len(self.mdcids):
-                  stopcondition = False
+                if ncheck > len(self.mdcids):
+                    stopcondition = False
 
         return self.mdcids
+
 
     def _build_infovector(self):
         """ build the information vector """
         row = len(self.dmx_)
+        self.info_ = zeros(row)
         tmp = zeros((row, 2))
         for i in range(row):
             for j in range(row):
                 tmp[j][0] = self.dmx_[i][j]
                 tmp[j][1] = j
-            tmp.sort(axis=0)
-
+            tmp = array(sorted(tmp, key=lambda item: item[0]))
             # Reciprocal of the rank
             div = 2.0
             for j in range(row):
@@ -126,6 +113,22 @@ class MDC:
                     self.info_[k] += 1/div
                     div += 1.0
 
+
+    def _appendnext(self):
+        """ Append the next most descriptive compound to list """
+        dist = self.info_[0]
+        mdc = 0
+
+        # Select the MDC with the major information
+        for i in range(1, len(self.info_)):
+            if self.info_[i] > dist:
+                dist = self.info_[i]
+                mdc = i
+            else:
+                continue
+        self.mdcids.append(mdc)
+
+
     def _rm_mdc_contrib(self):
         """ remove the most descriptive compound contribution """
         mdc = self.mdcids[-1]
@@ -135,8 +138,7 @@ class MDC:
         for j in range(row):
             tmp[j][0] = self.dmx_[mdc][j]
             tmp[j][1] = j
-        tmp.sort(axis=0)
-
+        tmp = array(sorted(tmp, key=lambda item: item[0]))
         div = 2.0
         for i in range(row):
             j = int(tmp[i][1])

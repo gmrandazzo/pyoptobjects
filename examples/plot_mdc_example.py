@@ -1,10 +1,17 @@
 #/usr/bin/env python
+
 """
 Example of Most Descriptive compound selection.
 
+
+Code Source: Giuseppe Marco Randazzo
+License: BSD 3 clausole
+
 """
+
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.spatial.distance import pdist, squareform
 
 from optobj.mdc import MDC
 
@@ -13,14 +20,18 @@ N = 20
 np.random.seed(N)
 mx = np.random.rand(N, 2)
 
-csel = MDC()
-idsel = csel.select(mx)
+dmx = squareform(pdist(mx, 'euclidean'))
+
+csel = MDC(dmx)
+idsel = csel.select()
 
 print("Selected %d objects in %d" % (len(idsel), float(N)))
 
-colors = [1.0 for i in range(N)]
+print(idsel)
+
+colors = ["black" for i in range(N)]
 for i in idsel:
-  colors[i] = 0.25
+  colors[i] = "red"
 
 area = [50 for i in range(N)]
 
