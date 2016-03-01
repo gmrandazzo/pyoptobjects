@@ -1,13 +1,16 @@
 """
-Most descriptor compounds selection
+Kennard Stones object selection
 """
 # Author: Giuseppe Marco Randazzo gmrandazzo@gmail.com
 # License: BSD 3 clause
 
+from random import randrange
+import time
+
 from numpy import zeros, array
 
-class MDC(object):
-    """Perform Most-Descriptor-Compound object selection
+class KS(object):
+    """Perform Kenard-Stoness compound object selection
 
     Parameters
     ----------
@@ -52,22 +55,22 @@ class MDC(object):
         self.nobjects = nobjects
         self.info_ = None
         self._build_infovector()
-        self.mdcids = []
+        self.ksids = []
 
 
-    def mdclist(self):
-        """ Return the list of most descriptor compounds """
-        return self.mdcids
+    def kslist(self):
+        """ Return the list of Kennard-Stones selected objects """
+        return self.ksids
 
 
     def getnext(self):
-        """ Get the next most descriptor compound """
+        """ Get the next compound """
         self._appendnext()
-        return self.mdcids[-1]
+        return self.ksids[-1]
 
 
     def select(self):
-        """ Run the Most Descriptive Compound Selection """
+        """ Run the Kennard-Stones compound Selection """
         stopcondition = True
         while stopcondition:
             self._appendnext()
@@ -151,3 +154,48 @@ class MDC(object):
 
         for i in range(row):
             self.info_[i] *= rank[i]
+
+
+
+function [model,test]=kenstone(X,k)
+
+[m,n]=size(X);
+if k>=m | k<=0
+    h=errordlg('Wrongly specified number of objects to be selected to model set.','Error');
+    model=[];
+    if nargout==2
+        test=[];
+    end
+    waitfor(h)
+    return
+end
+
+x=[[1:size(X,1)]' X];
+n=size(x,2);
+[i1,ind1]=min(fastdist(mean(x(:,2:n)),x(:,2:n)));
+model(1)=x(ind1,1);
+x(ind1,:)=[];
+
+[i2,ind2]=max(fastdist(X(model(1),:),x(:,2:n)));
+model(2)=x(ind2,1);
+x(ind2,:)=[];
+
+for d=3:k
+    [ii,ww]=max(min(fastdist(x(:,2:n),X(model,:))));
+	model(d)=x(ww,1);
+	x(ww,:)=[];
+end
+
+if nargout==2
+    test=1:size(X,1);
+    test(model)=[];
+end
+
+
+% --->
+
+function D=fastdist(x,y)
+
+% Calculates squared Euclidean distances between two sets of objetcs
+
+D=((sum(y'.^2))'*ones(1,size(x,1)))+(ones(size(y,1),1)*(sum(x'.^2)))-2*(y*x');

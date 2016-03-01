@@ -20,26 +20,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import pdist, squareform
 
+from optobj.disc import DISC
 import time
-from optobj.mdc import MDC
 
-
-N = 1000 # slow with 5000
+N = 2000
 np.random.seed(N)
 mx = np.random.rand(N, 2)
 
 dmx = squareform(pdist(mx, 'euclidean'))
 
-print("Starting Selection")
 t = time.time()
-csel = MDC(dmx)
+csel = DISC(dmx, "min", int(0.20*N))
 idsel = csel.select()
 print "Time: %.3f" % (time.time()-t)
 
+#print(idsel)
 print("Selected %d objects in %d" % (len(idsel), float(N)))
 
 #print(idsel)
-print("Plotting")
+
 colors = ["black" for i in range(N)]
 for i in idsel:
   colors[i] = "red"
