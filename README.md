@@ -1,7 +1,7 @@
-scikit-optobj
+pyoptobjects
 =============
 
-scikit-optobj is a Python module for optimal object subselection.
+pyoptobjects is a Python module for optimal object subselection.
 The object selection is usefull in computer-based method 
 for selecting a subset of similar or diverse object from a large dataset.
 
@@ -13,15 +13,10 @@ and it is currently mantained by Giuseppe Marco Randazzo.
 
 Voluntary contributions are welcome. :-)
 
-Important links
-===============
-
-- Official source code repo: https://github.com/scikit-optobj/scikit-learn
-
 Dependencies
 ============
 
-The required dependencies to use scikit-optobj is scikit-learn and numpy.
+The required dependencies to use pyoptobjects is numpy.
 
 
 Install
@@ -44,7 +39,7 @@ GIT
 
 You can check the latest sources with the command::
 
-  git clone https://github.com/gmrandazzo/scikit-optobj.git
+  git clone https://github.com/gmrandazzo/pyoptobjects.git
   
 ~~~
 
@@ -52,7 +47,7 @@ Contributing
 ~~~~~~~~~~~~~
 
 To contribute you can fork the project, or if you have already forked the project
-update to the latest version of scikit-optobj, make the changes and open a Pull Request.
+update to the latest version of pyoptobjects, make the changes and open a Pull Request.
 
 However some recomendation before open a Pull Request:
   * Be sure that your code it's working.
